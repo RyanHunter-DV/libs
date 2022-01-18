@@ -33,6 +33,8 @@ void cppString::__internalInitStringMembers(char *initString)
 cppString::cppString()
 {
 	m_defaultCopyMode = CPPSTRING_SUITCOPY_MODE;
+	m_rawString = NULL;
+	m_rawStringLen = 0;
 }
 cppString::cppString(const char *initString)
 {
@@ -193,5 +195,41 @@ cppString::~cppString()
 	delete [] m_rawString;
 }
 
+void cppString::append(const char *src, const char split)
+{
+	uint32_t srcLen = cppString::instantLen(src);
+	
+	_resizeKeepOriginalString(srcLen);
+	
+	uint32_t startAppendIndex = m_rawStringLen;
+	if (split != '\0')
+	{
+		*(m_rawString+startAppendIndex) = split;
+		startAppendIndex++;
+		m_rawStringLen++;
+	}
+	for (int index=startAppendIndex;index<srcLen+startAppendIndex;index++)
+	{
+		*(m_rawString+index) = *(src+index-startAppendIndex);
+	}
+	m_rawStringLen+=srcLen; // update m_rawStringLen
+	
+	return;
+}
+
+void cppString::_resizeKeepOriginalString(uint32_t len)
+{
+	char *tmpOriginalString = m_rawString;
+	
+	m_rawString = new char[m_rawStringLen+len];
+	
+	if (tmpOriginalString != NULL)
+	{
+		directStringCopyMacro(tmpOriginalString,m_rawString);
+		delete tmpOriginalString;
+	}
+	
+	return;
+}
 
 #endif
