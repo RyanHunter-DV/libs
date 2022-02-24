@@ -9,7 +9,7 @@
 #define rhString_hpp
 
 #include <stdint.h>
-#include <memop.hpp>
+// #include <memop.hpp>
 
 // #include <iostream>
 // using namespace std;
