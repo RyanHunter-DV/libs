@@ -70,7 +70,7 @@ template <class T>
 void queue<T>::allocateMoreContainer(uint32_t s) // {{{
 {
 	T* newEles = new T[containerSize + s];
-	if (memCopy(elements, newEles, size)) {
+	if (memCopy<T>(elements, newEles, size)) {
 		// copy error, delete new pointer and return with nothing
 		delete newEles;
 		return;

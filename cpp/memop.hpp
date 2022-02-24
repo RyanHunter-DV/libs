@@ -23,6 +23,7 @@ void clearAllocatedMemory(char* p, uint32_t s) { memoryClear('\0'); }
 // this API cannot check the legality of the memory space, so users should
 // confirm that all spaces are legal before calling this copy
 
+/*
 #define memCopyOperation \
 	if (s <= 0) { return -1; } \
 	for (int i = 0; i < s; i++) { \
@@ -33,6 +34,16 @@ int memCopy(int* src, int* dest, int s) {memCopyOperation;}
 int memCopy(char* src, char* dest, int s) { memCopyOperation; }
 int memCopy(rhString* src, rhString* dest, int s) { memCopyOperation; }
 int memCopy(rhString** src, rhString** dest, int s) { memCopyOperation; }
+*/
+
+template <typename T>
+int memCopy(T* src, T* dest, int s) {
+	if (s <= 0) { return -1; }
+	for (int i = 0; i < s; i++) {
+		* (dest + i) = *(src + i);
+	}
+	return 0;
+}
 
 // enlarge a given pointer with specific count of arg::s
 void enlarge(void* p, int s) {
