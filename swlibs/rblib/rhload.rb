@@ -3,6 +3,8 @@
 ## without the extension, for example
 ## rhload 'path/file' can load path/file.rh
 ## beside, this method can automatically add the path of that file into search path
+## TODO, add support of $LOAD_PATH, so that rhload can search and detect files if they are
+## in range of $LOAD_PATH
 def rhload fname; ##{
 
 	extPtrn = /\.rh/;
