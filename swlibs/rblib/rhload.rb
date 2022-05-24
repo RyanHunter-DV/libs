@@ -13,11 +13,12 @@ def rhload fname; ##{
 		fname += '.rh';
 	end
 
-	if File.exists?(fname)
-		load fname;
-	else
-		puts "Error, file(#{fname}) not exists";
-		return;
+	## search file
+	$LOAD_PATH.each do |p|
+		if File.exists?(File.join(p,fname))
+			load fname;
+			break;
+		end
 	end
 
 	## push dir to LOAD_PATH
