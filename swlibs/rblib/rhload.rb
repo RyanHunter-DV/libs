@@ -17,10 +17,10 @@ def rhload fname; ##{
 	$LOAD_PATH.each do |p|
 		full = File.join(p,fname);
 		if File.exists?(full)
-			load fname;
 			## push dir to LOAD_PATH
 			dir = File.dirname(File.absolute_path(full));
 			$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
+			load fname; ## add new path before load in case that rhload called in fname.
 			break;
 		end
 	end
