@@ -15,14 +15,16 @@ def rhload fname; ##{
 
 	## search file
 	$LOAD_PATH.each do |p|
-		if File.exists?(File.join(p,fname))
+		full = File.join(p,fname);
+		if File.exists?(full)
 			load fname;
+			## push dir to LOAD_PATH
+			dir = File.dirname(File.absolute_path(full));
+			$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 			break;
 		end
 	end
 
-	## push dir to LOAD_PATH
-	dir = File.dirname(File.absolute_path(fname));
-	$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
+
 	
 end ##}
