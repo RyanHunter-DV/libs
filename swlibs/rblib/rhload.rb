@@ -13,6 +13,13 @@ def rhload fname; ##{
 		fname += '.rh';
 	end
 
+	if File.exists?(fname)
+		dir = File.dirname(File.absolute_path(fname));
+		$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
+		load fname;
+		return;
+	end
+
 	## search file
 	$LOAD_PATH.each do |p|
 		full = File.join(p,fname);
@@ -21,7 +28,7 @@ def rhload fname; ##{
 			dir = File.dirname(File.absolute_path(full));
 			$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 			load fname; ## add new path before load in case that rhload called in fname.
-			break;
+			return;
 		end
 	end
 
