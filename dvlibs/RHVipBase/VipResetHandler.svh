@@ -4,13 +4,13 @@
 class VipResetHandler#(type TR=VipResetTrans) extends uvm_object; // {
 
 	uvm_analysis_imp#(TR,VipResetHandler#(TR)) resetI;
-	local VipResetStaus st;
+	local VipResetStatus st;
 
 	`uvm_object_utils(VipResetHandler#(TR))
 
 	function new(string name="VipResetHandler");
 		super.new(name);
-		resetI = new("resetI");
+		resetI = new("resetI",this);
 	endfunction
 
 
@@ -29,7 +29,7 @@ task VipResetHandler::threadControl(process p); // {
 endtask // }
 
 function void VipResetHandler::write(VipResetTrans _t); // {
-	st = _t;
+	// @RyanH,TODO, st = _t;
 endfunction // }
 
 `endif

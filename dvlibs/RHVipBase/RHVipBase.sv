@@ -6,14 +6,16 @@ package RHVipBase; // {
 	`include "uvm_macros.svh"
 	import uvm_pkg::*;
 
+	`include "rhstd.svh"
 
 	`include "VipBaseTypes.svh"
 	`include "VipResetTrans.svh"
-	`include "VipEnvBase.svh"
+	`include "VipResetHandler.svh"
 	`include "VipMonitorBase.svh"
 	`include "VipDriverBase.svh"
-	`include "VipResetHandler.svh"
+	`include "VipSeqrBase.svh"
 	`include "VipAgentBase.svh"
+	`include "VipEnvBase.svh"
 
 
 

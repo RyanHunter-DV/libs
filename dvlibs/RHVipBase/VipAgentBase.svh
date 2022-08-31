@@ -19,7 +19,7 @@ endclass // }
 function void VipAgentBase::connect_phase(uvm_phase phase); // {
 	if (is_active) begin
 		drv.setResetHandler(reseth);
-		mon.resetP.connect(drv.resetI);
+		// @RyanH,TODO, mon.resetP.connect(drv.resetI);
 	end
 endfunction // }
 
