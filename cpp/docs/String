@@ -1,0 +1,336 @@
+# Features
+## initialize
+This String supports two ways to initialize, one is using `const char*` while another is `char*` .
+So that we can initial a new String object like:
+```
+String s0("hello");
+String s1(s0.get());
+// also support new a String pointer
+String* pS0 = new String(s0.get());
+```
+
+## support string copy
+The String's copy() API provides an auto selection mode to get characters from give source according to the mDefaultCopyMode
+### suitCopy
+suitCopy will automatically adjust the String's internal character space if the source has larger character numbers than target String.
+### clipCopy
+
+
+## string compare
+uses operator == to compare current String contents with a given String, const char* or char*.
+using operator overrides.
+## string split feature
+The string supports being splitted by a specific separator, then return a pointer of [[StringSplits]]  which stores all splitted items. The separator must a char, and now supports const char only.
+
+---
+# class String
+- [[#local macro]]
+	- [[#charSize]]
+- [[#typedef]]
+- [[#fields]]
+- APIs
+	- [[#split]], #TBD 
+	- [[#copy]]
+	- [[#constructor]]
+	- [[#operator==]], #TBD 
+	- [[#operator+=]]
+	- [[#append]]
+	- [[#+get()]]
+	- [[#+len()]], #TBD 
+- Internal Functions
+	- [[#- copyFromChars]]
+	- [[#- initial]]
+	- [[#- convertToNonConst]]
+	- [[#-clear]]
+
+## head of source file
+This section for auto generating source code files.
+**prototype**
+```
+#ifndef rhstring__h
+#define rhstring__h
+
+namespace RHLib {
+
+class String {
+```
+**procedures**
+```
+#ifndef rhstring__cpp
+#define rhstring__cpp
+
+#include <rhstring.h>
+#include <stdlib.h>
+
+using namespace RHLib;
+```
+## local macro
+### charSize
+**procedures**
+```
+#define charSize(p,s) \
+	s = 0; \
+	while (*(p+s) != '\0') { \
+		s++; \
+	}
+```
+## typedef
+**prototype**
+```
+	typedef enum {
+		suit,
+		clip
+	} stringCopyModeEnum;
+```
+## fields
+```
+private:
+	char* rawString;
+	int rawStringLen;
+```
+## +split()
+API to split the string of this class with specific char: sep, the return type is [[StringSplits]].
+```
+public:
+	StringSplits* split(const char sep);
+```
+**procedures**
+```
+```
+## +constructor()
+Different initialization types, can initial with a [const] char* or nothing.
+**prototype**
+```
+public:
+	// support initialize with a const char*, like:
+	// String s("hello");
+	String(const char* raw);
+	String(char* raw);
+	String();
+```
+**procedures**
+```
+String::String(const char* raw) {
+	char* pNCRaw;
+	__initial();
+	pNCRaw = __convertToNonConst(raw);
+	__copyFromChars(pNCRaw);
+	delete pNCRaw;
+}
+String::String(char* raw) {
+	__initial();
+	__copyFromChars(raw);
+	
+}
+String::String() {
+	__initial();
+}
+```
+## - initial()
+internal function to initial the fields to NULL value, called by constructor.
+**prototype**
+```
+private:
+	void __initial();
+```
+**procedures**
+```
+void String::__initial() {
+	rawString    = NULL;
+	rawStringLen = 0;
+}
+```
+## -copyFromChars()
+Internal function to copy characters by input char* pSrc to char* rawString. renew flag used to indicate the program to renew the rawString pointer or not.
+- [[#local macro]]
+
+**prototype**
+```
+private:
+	void __copyFromChars(char* pSrc,bool renew=true);
+```
+**procedures**
+```
+void String::__copyFromChars(char* pSrc,bool renew) {
+	int s = 0;
+	charSize(pSrc,s);
+	if (renew) {
+		if (rawString != NULL) {delete rawString;}
+		rawString    = new char[s+1];
+		rawStringLen = s;
+	}
+	int index = 0;
+	while (*(pSrc+index)!='\0') {
+		*(rawString+index) = *(pSrc+index);
+		index++;
+	}
+}
+```
+
+## -convertToNonConst()
+Internal function to convert a const char* into char*, and return through the function. The return pointer is newed in this function but should be deleted by its caller once it don't want to use anymore.
+**prototype**
+```
+private:
+	char* __convertToNonConst(const char* c);
+```
+**procedures**
+```
+char* String::__convertToNonConst(const char* c) {
+	char* pNC;
+	int s = 0;
+	charSize(c,s);
+	pNC = new char [s+1];
+	s = 0;
+	while (*(c+s)!='\0') {
+		*(pNC+s) = *(c+s);
+		s++;
+	}
+	*(pNC+s) = '\0'; // guard with '\0'
+	return pNC;
+}
+```
+## -clear()
+internal function to clear the length and char* of String class.
+**prototype**
+```
+	void __clear();
+```
+**procedures**
+```
+void String::__clear() {
+	rawStringLen = 0;
+	delete rawString;
+}
+```
+## +copy()
+copy API, which copies characters from the input src in to local class. There're two types of copy mode supported, suit and clip.
+For suit copy, if the src character numbers larger or smaller then current String, the memory space will be rearranged to fit for the source characters.
+For clip copy, curently we not support this feature.
+**prototype**
+```
+public:
+	// copy chars from the input argument into local rawString, default copy mode
+	// is suit copy
+	void copy(const char* pSrc,stringCopyModeEnum mode=suit);
+	void copy(char* pSrc,stringCopyModeEnum mode=suit);
+	void copy(String* pSrc,stringCopyModeEnum mode=suit);
+```
+**procedures**
+```
+void String::copy(char* pSrc,stringCopyModeEnum mode) {
+	int len=0;
+	charSize(pSrc,len);
+	if (rawStringLen!=0) {__clear();}
+	__copyFromChars(pSrc);
+}
+void String::copy(const char* pSrc,stringCopyModeEnum mode) {
+	char* pNCSrc = __convertToNonConst(pSrc);
+	this.copy(pNCSrc,mode);
+}
+void String::copy(String* pSrc,stringCopyModeEnum mode) {
+	this.copy(pSrc->get(),mode);
+}
+```
+## +operator ==
+Using operator == can compare current string with an rhs, the rhs can be a String pointer, or const char* or char*. Finally we translate all other type of rhs into char*, then do the comparison one char by char. The return type is a bool, true indicates the same while false indicates different.
+
+**prototype**
+```
+public:
+	bool operator == (String* pRhs);
+	bool operator == (const char* pRhs);
+	bool operator == (char* pRhs);
+```
+**procedures**
+#TBD 
+```
+
+```
+## +operator +=
+An easy way to append current String with input characters. This has the same functionality as [[#append()]]. This supports 3 main types of input src, finally it will call the append() API to do real append actions. This operation has no separator supported for appending string.
+**prototype**
+```
+	void operator += (String* pSrc);
+	void operator += (const char* pSrc);
+	void operator += (char* pSrc);
+```
+**procedures**
+call directly the append() API to process the append functionalities.
+```
+void String::operator += (String* pSrc) {this.append(pSrc);}
+void String::operator += (const char* pSrc) {this.append(pSrc);}
+void String::operator += (char* pSrc) {this.append(pSrc);}
+```
+## +append()
+API to append input src charaters into current class, this API supports specifying a separator char that inserted before the append string, by default, the separator is '\0'. This API can be used like:
+
+`String str("world");`
+`str.append("hello",' '); // now string has: "world hello"`
+`str.append("hello"); // now string has: "worldhello"`
+
+- [[#charSize]]
+- 
+**prototype**
+```
+	void append(String* pSrc,sep='');
+	void append(const char* pSrc,sep='');
+	void append(char* pSrc,sep='');
+```
+
+**procedures**
+for different input pSrc formats, program will translate those types into char*, and then call the append API that support char* pSrc.
+
+```
+void String::append(char* pSrc,sep) {
+	int len;
+	charSize(pSrc,len);
+	if (sep!='') {len++;}
+	char* newRawString = new char[rawStringLen+len+1];
+	char* oldRawString = rawString;
+	rawString = newRawString;
+	rawStringLen += len;
+	__copyFromChars(oldRawString,false);
+	delete oldRawString;
+	return;
+}
+void String::append(String* pSrc,sep) {
+	this.append(pSrc->get(),sep);
+	return;
+}
+void String::append(const char* pSrc,sep) {
+	char* pNewSrc = __convertToNonConst(pSrc);
+	this.append(pNewSrc,sep);
+	delete pNewSrc;
+	return;
+}
+```
+## +get()
+API to get the char* rawString of this class.
+**prototype**
+```
+	char* get();
+```
+**procedures**
+```
+char* String::get() {
+	return rawString;
+}
+```
+
+
+## end of source file
+This section only for auto generating source code program
+**prototype**
+```
+};
+};
+
+#endif
+```
+**procedures**
+```
+#undef charSize
+
+#endif
+```
