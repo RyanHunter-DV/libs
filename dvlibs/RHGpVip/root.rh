@@ -1,5 +1,0 @@
-component :RHGpVip do
-	cdir = File.dirname(File.absolute_path(__FILE__))
-	incdir cdir
-	fileset 'RHGpVipPkg.sv','RHGpVip.list'
-end
