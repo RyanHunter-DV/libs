@@ -61,3 +61,12 @@ function void GpvAgent::connect_phase(uvm_phase phase);
 	end
 endfunction
 ```
+## end of code file
+**prototype**
+```
+endclass
+```
+**procedures**
+```
+`endif
+```
