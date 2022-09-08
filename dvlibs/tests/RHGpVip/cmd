@@ -1,0 +1,1 @@
+simf -e 'buildflow(:compileConfig).compile'
