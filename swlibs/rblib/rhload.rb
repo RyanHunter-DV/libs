@@ -18,8 +18,8 @@
 ###################################################################################
 
 def rhload fname ##{
-	extPattern = /\.rh/;
-	if not extPattern=~ fname
+
+	if not (/\.rh/=~fname or /\.rb/=~fname)
 		fname += '.rh';
 	end
 
