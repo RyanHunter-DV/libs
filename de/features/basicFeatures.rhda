@@ -1,0 +1,49 @@
+## this basic feature is mainly for early development, to setup some of the
+## basic features so to enhance the rhDeAss flow.
+## by RyanH.
+
+
+# bitand features
+10.times do |idx|
+	next if idx < 2;
+	feature 'bitand'+idx.to_s, *opts do
+		l="#{opts[0]} = #{opts[1]} & #{opts[2]}"
+		sidx = 2
+		while (sidx < idx) do
+			l += " & #{opts[sidx]}"
+			sidx+=1
+		end
+		verilog l
+	end
+end
+
+# combine
+feature 'combineMux2', *opts do
+	verilog "#{opts[2]} = <=%config%>?#{opts[0]} : #{opts[1]}"
+end
+feature 'combineMux3', *opts do
+	verilog "#{opts[3]} = <=%config%>?#{opts[0]} : <=%config%>?#{opts[1]}:#{opts[2]}"
+end
+feature 'basicDff', *ops,**opts do ##{{{
+	ck  = ops[0];
+	rst = ops[1];
+	en  = ops[2];
+	d   = ops[3];
+	q   = ops[4];
+	ckedge = 'posedge';
+	rstedge= 'negedge';
+	ckedge = opts[:ckedge] if opts.has_key?(:ckedge);
+	rstedge= opts[:rstedge] if opts.has_key?(:rstedge);
+	lines = [];
+
+	lines << "always @(#{ckedge} #{ck} or #{rstedge} #{rst}) begin";
+	if rstedge=='negedge'
+		lines << "\tif (!#{rst})";
+	else
+		lines << "\tif (#{rst})";
+	end
+	lines << "\t\t#{q} <= 1'b0";
+	lines << "else #{q} <= #{d}";
+	lines << "end";
+	verilog lines;
+end ##}}}
