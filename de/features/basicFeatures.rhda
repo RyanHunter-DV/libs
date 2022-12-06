@@ -47,3 +47,42 @@ feature 'basicDff', *ops,**opts do ##{{{
 	lines << "end";
 	verilog lines;
 end ##}}}
+
+feature 'hightolowArbitor' do |*opts| ##{{{
+	cnts = []
+	gnum = opts.shift; ## group number for arbitration
+	gout = opts.pop;
+	## cr   = opts.shift;
+	cnts << "always @(*) begin"
+	opts.each_with_index do |gN,index|
+		cnts << "\telse" if index!=0;
+		cnts << "\tif (#{gN.signal(0)}) begin"
+		cnts << "\t\t#{gout.signal(0)}=#{gN.signal(0)};"
+		cnts << "\t\t#{gout.signal(1)}=#{gN.signal(1)};"
+		cnts << "\tend"
+	end
+	verilog cnts;
+end ##}}}
+
+feature 'bufferHasClear' do |*opts| ##{{{
+	cr = opts.shift;
+	d  = opts.shift;
+	c  = opts.shift;
+	q  = opts.shift;
+	cnts = [];
+	cnts << "always @(posedge #{cr.signal(0)} or negedge #{cr.signal(1)}) begin";
+	cnts << "\tif (~#{cr.signal(1)}) begin";
+	cnts << "\t\t#{q.signal(0)} <= #{q.signal(0).width}'h0;";
+	cnts << "\t\t#{q.signal(1)} <= #{q.signal(1).width}'h0;";
+	cnts << "\tend else begin";
+	cnts << "\t\tif (#{d.signal(0)}==1'b1) begin";
+	cnts << "\t\t\t#{q.signal(0)}<=#{d.signal(0)};";
+	cnts << "\t\t\t#{q.signal(1)}<=#{d.signal(1)};";
+	cnts << "\t\tend else if (#{c}==1'b1) begin";
+	cnts << "\t\t\t#{q.signal(0)} <= #{q.signal(0).width}'h0;";
+	cnts << "\t\t\t#{q.signal(1)} <= #{q.signal(1).width}'h0;";
+	cnts << "\t\tend";
+	cnts << "\tend";
+	cnts << "end";
+	verilog cnts;
+end ##}}}
