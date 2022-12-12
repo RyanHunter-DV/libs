@@ -1,3 +1,0 @@
-export PROJECT_ROOT=/home/ryan/prj/GitHub/libs/dvlibs/tests/RHGpVip
-export OUT_ANCHOR=$PROJECT_ROOT/out
-export SIMF_ENTRY=$PROJECT_ROOT/root.rh
