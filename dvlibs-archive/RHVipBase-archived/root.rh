@@ -1,0 +1,7 @@
+component :RHVipBase do
+	cdir = File.dirname(File.absolute_path(__FILE__))
+	incdir cdir
+	libdir = '/home/ryan/prj/GitHub/libs/dvlibs'
+	incdir libdir
+	fileset 'RHVipBase.sv','RHVipBase.list'
+end
