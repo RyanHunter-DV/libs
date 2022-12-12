@@ -1,0 +1,19 @@
+vmodule 'cfixedArbitor #(WIDTH)' do
+	port 'vld0_i','[WIDTH-1:0] dat0_i','vld1_i','[WIDTH-1:0] dat1_i'
+	port 'vld2_i','[WIDTH-1:0] dat2_i','vld_o','[WIDTH-1:0] dat_o'
+
+
+	verilog "// generate data output"
+	verilog "always @(*) begin"
+	verilog "\tif (vld0_i) dat_o = dat0_i;"
+	verilog "\telse if (vld1_i) dat_o = dat1_i;"
+	verilog "\telse if (vld2_i) dat_o = dat2_i;"
+	verilog "\telse dat_o = dat_o;"
+	verilog "end"
+	verilog "// generate vld out"
+	verilog "always @(*) begin"
+	verilog "\tif (vld0_i|vld1_i|vld2_i) vld_o = 1'b1;"
+	verilog "\telse vld_o = 1'b0;"
+	verilog "end"
+
+end
