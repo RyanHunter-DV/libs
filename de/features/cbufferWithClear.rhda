@@ -1,0 +1,17 @@
+vmodule 'cbufferWithClear #(WIDTH=32)' do
+	port 'clear_i','en_i','[WIDTH-1:0] d_i','en_o','[WIDTH-1:0] d_o'
+	block do
+		verilog "always @(*) begin"
+		verilog "\tif (en_i) begin"
+		verilog "\t\ten_o = 1'b1;"
+		verilog "\t\td_o  = d_i;"
+		verilog "\tend else if (clear_i) begin"
+		verilog "\t\ten_o = 1'b0;"
+		verilog "\t\td_o  = {WIDTH{1'b0}};"
+		verilog "\tend else begin"
+		verilog "\t\ten_o = en_o;"
+		verilog "\t\td_o  = d_o;"
+		verilog "\tend"
+		verilog "end"
+	end
+end
