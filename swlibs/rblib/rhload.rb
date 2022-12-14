@@ -34,7 +34,7 @@ def rhload fname ##{
 		## load directly
 		## dir = File.dirname(File.absolute_path(fname));
 		## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
-		puts "DEBUG, load: #{File.absolute_path(fname)}";
+		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		load fname;
 		return;
 	end
@@ -42,7 +42,7 @@ def rhload fname ##{
 	## checking if the caller give an relative path
 	f = File.join(path,fname);
 	if File.exists?(f)
-		puts "DEBUG, load: #{f}";
+		## puts "DEBUG, load: #{f}";
 		load f;
 		return;
 	end
@@ -54,7 +54,7 @@ def rhload fname ##{
 			## push dir to LOAD_PATH
 			## dir = File.dirname(File.absolute_path(full));
 			## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
-			puts "DEBUG, load: #{full}";
+			## puts "DEBUG, load: #{full}";
 			load full;
 			return;
 		end
