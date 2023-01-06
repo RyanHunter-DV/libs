@@ -17,7 +17,7 @@
 ## - in current path, and if not found, then using $LOAD_PATH
 ###################################################################################
 
-def rhload fname ##{
+def rhload fname,visible=false ##{
 
 	if not (/\.rh/=~fname or /\.rb/=~fname)
 		fname += '.rh';
@@ -36,6 +36,7 @@ def rhload fname ##{
 		## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		load fname;
+        puts "file #{fname} processed" if visible;
 		return;
 	end
 
@@ -44,6 +45,7 @@ def rhload fname ##{
 	if File.exists?(f)
 		## puts "DEBUG, load: #{f}";
 		load f;
+        puts "file #{f} processed" if visible;
 		return;
 	end
 
@@ -56,40 +58,9 @@ def rhload fname ##{
 			## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 			## puts "DEBUG, load: #{full}";
 			load full;
+            puts "file #{full} processed" if visible;
 			return;
 		end
 	end
 
 end ##}
-
-
-##def rhload fname; ##{
-##
-##	extPtrn = /\.rh/;
-##
-##	if not extPtrn =~ fname
-##		fname += '.rh';
-##	end
-##
-##	if File.exists?(fname)
-##		dir = File.dirname(File.absolute_path(fname));
-##		$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
-##		load fname;
-##		return;
-##	end
-##
-##	## search file
-##	$LOAD_PATH.each do |p|
-##		full = File.join(p,fname);
-##		if File.exists?(full)
-##			## push dir to LOAD_PATH
-##			dir = File.dirname(File.absolute_path(full));
-##			$LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
-##			load fname; ## add new path before load in case that rhload called in fname.
-##			return;
-##		end
-##	end
-##
-##
-##	
-##end ##}
