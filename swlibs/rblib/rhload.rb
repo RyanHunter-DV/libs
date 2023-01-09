@@ -17,7 +17,16 @@
 ## - in current path, and if not found, then using $LOAD_PATH
 ###################################################################################
 
+module Rhload ##{{{
+    @visible = false;
+    def self.visible;return @visible; end
+    def self.visible= rhs; @visible = rhs; end
+end ##}}}
+
 def rhload fname,visible=false ##{
+
+    ## if visible in arg is false, then set by Rhload's visible config
+    visible = Rhload.visible if visible==false;
 
 	if not (/\.rh/=~fname or /\.rb/=~fname)
 		fname += '.rh';
@@ -36,7 +45,7 @@ def rhload fname,visible=false ##{
 		## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		load fname;
-        puts "file #{fname} processed" if visible;
+        puts "file #{File.absolute_path(fname)} processed" if visible;
 		return;
 	end
 
@@ -45,7 +54,7 @@ def rhload fname,visible=false ##{
 	if File.exists?(f)
 		## puts "DEBUG, load: #{f}";
 		load f;
-        puts "file #{f} processed" if visible;
+        puts "file #{File.absolute_path(f)} processed" if visible;
 		return;
 	end
 
@@ -58,7 +67,7 @@ def rhload fname,visible=false ##{
 			## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 			## puts "DEBUG, load: #{full}";
 			load full;
-            puts "file #{full} processed" if visible;
+            puts "file #{File.absolute_path(full)} processed" if visible;
 			return;
 		end
 	end
