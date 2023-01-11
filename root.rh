@@ -1,0 +1,5 @@
+rhload 'dv/base/node'
+
+context :rhlib do
+	component :dvbase
+end

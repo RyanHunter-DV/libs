@@ -1,5 +1,0 @@
-rhload 'base/node'
-
-context :rhlib do
-	component :base
-end

@@ -1,4 +1,4 @@
-component :base do
+component :dvbase do
     ## current dir as incdir should be added to simf by default
     fileset 'rhlib.sv'
 end
