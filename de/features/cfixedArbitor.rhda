@@ -1,4 +1,7 @@
-vmodule 'cfixedArbitor #(WIDTH)' do
+"""
+a fixed order arbitor, priority from index 0 ~ <N>
+"""
+vmodule 'fixedCombArbitor3 #(WIDTH)' do
 	port 'vld0_i','[WIDTH-1:0] dat0_i','vld1_i','[WIDTH-1:0] dat1_i'
 	port 'vld2_i','[WIDTH-1:0] dat2_i','vld_o','[WIDTH-1:0] dat_o'
 

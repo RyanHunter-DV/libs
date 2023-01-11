@@ -1,4 +1,5 @@
 require 'open3'
+rhload 'exceptionbase.rb'
 module Shell ##{
 
 	@type = :bash;
@@ -112,3 +113,13 @@ module Shell ##{
 	end ##}}}
 
 end ##}
+
+class ShellException < ExceptionBase
+	def initialize msg='',sig=-1 ##{{{
+		super();
+		@exitSig=sig;
+		@eFlag  ='SHELLF';
+		@elevel =:FATAL;
+		@extMsg = msg if msg!='';
+	end ##}}}
+end
