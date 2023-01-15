@@ -16,6 +16,7 @@ package Rhlib;
 	`include "rhResetTransBase.svh"
 	`include "rhMonitorBase.svh"
 	`include "rhDriverBase.svh"
+	`include "rhSeqrBase.svh"
 endpackage
 
 `endif
