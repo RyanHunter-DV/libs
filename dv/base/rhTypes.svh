@@ -11,6 +11,7 @@
 
 typedef enum logic {
 	RhResetUnknow   = 'bx,
+	RhResetFloating = 'bz,
 	RhResetActive   = 'b0,
 	RhResetInactive = 'b1
 } RhResetState_enum;

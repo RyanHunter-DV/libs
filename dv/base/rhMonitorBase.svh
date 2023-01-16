@@ -12,6 +12,7 @@
 class RhMonitorBase extends uvm_monitor;
 	uvm_analysis_port #(RhResetTransBase) resetP;
 	RhResetState_enum currentResetState;
+	bit resetEnabled = 1'b1;
 	`uvm_component_utils_begin(RhMonitorBase)
 	`uvm_component_utils_end
 	extern virtual function void build_phase(uvm_phase phase);
@@ -21,7 +22,11 @@ class RhMonitorBase extends uvm_monitor;
 	extern task resetMonitor();
 	extern function  new(string name="RhMonitorBase",uvm_component parent=null);
 	extern virtual function void connect_phase(uvm_phase phase);
+	extern function void resetDisable ();
 endclass
+function void RhMonitorBase::resetDisable(); // ##{{{
+	resetEnabled = 1'b0;
+endfunction // ##}}}
 function void RhMonitorBase::build_phase(uvm_phase phase);
 	super.build_phase(phase);
 	currentResetState = RhResetUnknow;
@@ -32,7 +37,7 @@ endtask
 task RhMonitorBase::run_phase(uvm_phase phase);
 	super.run_phase(phase);
 	fork
-		resetMonitor();
+		if (resetEnabled) resetMonitor();
 		mainProcess();
 	join
 endtask
