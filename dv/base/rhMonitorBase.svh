@@ -16,7 +16,7 @@ class RhMonitorBase extends uvm_monitor;
 	`uvm_component_utils_begin(RhMonitorBase)
 	`uvm_component_utils_end
 	extern virtual function void build_phase(uvm_phase phase);
-	extern virtual task waitResetStateChanged(output RhResetState_enum s);
+	extern virtual task waitResetStateChanged(input RhResetState_enum c,output RhResetState_enum s);
 	extern virtual task run_phase(uvm_phase phase);
 	extern virtual task mainProcess();
 	extern task resetMonitor();
@@ -32,7 +32,7 @@ function void RhMonitorBase::build_phase(uvm_phase phase);
 	currentResetState = RhResetUnknow;
 	resetP = new("resetP",this);
 endfunction
-task RhMonitorBase::waitResetStateChanged(output RhResetState_enum s);
+task RhMonitorBase::waitResetStateChanged(input RhResetState_enum c,output RhResetState_enum s);
 endtask
 task RhMonitorBase::run_phase(uvm_phase phase);
 	super.run_phase(phase);
@@ -49,7 +49,10 @@ task RhMonitorBase::resetMonitor();
 	resetP.write(_t);
 	forever begin
 		RhResetTransBase updatedTrans = new("updatedReset");
-		waitResetStateChanged(currentResetState);
+		RhResetState_enum s;
+		`uvm_info("DEBUG",$sformatf("call waitResetStateChanged, with current state: %s",currentResetState.name()),UVM_LOW)
+		waitResetStateChanged(currentResetState,s);
+		currentResetState = s;
 		updatedTrans.state = currentResetState;
 		resetP.write(updatedTrans);
 	end
