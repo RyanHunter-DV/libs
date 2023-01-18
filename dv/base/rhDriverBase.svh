@@ -22,7 +22,11 @@ class RhDriverBase #( type REQ=uvm_sequence_item,RSP=REQ) extends uvm_driver#(RE
 	extern function  new(string name="RhDriverBase",uvm_component parent=null);
 	extern virtual function void connect_phase(uvm_phase phase);
 	extern virtual function void write_reset(RhResetTransBase _tr);
+	extern function void resetDisable ();
 endclass
+function void RhDriverBase::resetDisable(); // ##{{{
+	resetState = RhResetInactive;
+endfunction // ##}}}
 task RhDriverBase::mainProcess();
 	// override in sub classes
 endtask
