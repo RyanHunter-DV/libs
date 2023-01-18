@@ -38,7 +38,18 @@ def rhload fname,visible=false ##{
 		return;
 	end
 	path = File.dirname(File.absolute_path(stacks[0]));
+	## checking if the caller give an relative path
+	## load by relative path first
+	f = File.join(path,fname);
+	if File.exists?(f)
+		## puts "DEBUG, load: #{f}";
+		load f;
+        puts "file #{File.absolute_path(f)} processed" if visible;
+		return;
+	end
+
 	## checking if the caller gives an abasolute path
+	## load directly with the given path+name
 	if File.exists?(fname)
 		## load directly
 		## dir = File.dirname(File.absolute_path(fname));
@@ -49,16 +60,9 @@ def rhload fname,visible=false ##{
 		return;
 	end
 
-	## checking if the caller give an relative path
-	f = File.join(path,fname);
-	if File.exists?(f)
-		## puts "DEBUG, load: #{f}";
-		load f;
-        puts "file #{File.absolute_path(f)} processed" if visible;
-		return;
-	end
 
 	## if not exists by the path, searching with LOAD_PATH
+	## load from RUBYLIB
 	$LOAD_PATH.each do |p|
 		full = File.join(p,fname);
 		if File.exists?(full)
