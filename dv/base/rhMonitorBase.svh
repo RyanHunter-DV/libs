@@ -23,6 +23,7 @@ class RhMonitorBase extends uvm_monitor;
 	extern function  new(string name="RhMonitorBase",uvm_component parent=null);
 	extern virtual function void connect_phase(uvm_phase phase);
 	extern function void resetDisable ();
+	extern local task __mainProcess_guard__ ();
 endclass
 function void RhMonitorBase::resetDisable(); // ##{{{
 	resetEnabled = 1'b0;
@@ -38,9 +39,32 @@ task RhMonitorBase::run_phase(uvm_phase phase);
 	super.run_phase(phase);
 	fork
 		if (resetEnabled) resetMonitor();
-		mainProcess();
+		__mainProcess_guard__();
 	join
 endtask
+
+task RhMonitorBase::__mainProcess_guard__();
+	if (resetEnabled) begin
+		process _thread;
+		forever begin
+			wait(currentResetState == RhResetInactive);
+			fork 
+				begin
+					_thread = process::self();
+					mainProcess();
+				end
+				begin
+					wait(currentResetState==RhResetActive);
+					_thread.kill();
+				end
+			join
+			disable fork;
+		end
+	end else begin
+		mainProcess();
+	end
+endtask
+
 task RhMonitorBase::mainProcess();
 endtask
 task RhMonitorBase::resetMonitor();
