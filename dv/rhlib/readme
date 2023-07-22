@@ -1,0 +1,4 @@
+The new lib dir for rhlibs, containing:
+- rhlib.svh, various typedef for dv.
+- RhVipBase package, the base components for developing a vip, enhancement from the base dir.
+
