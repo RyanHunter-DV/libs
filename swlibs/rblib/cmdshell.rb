@@ -1,5 +1,5 @@
 require 'open3'
-rhload 'exceptionbase.rb'
+require 'libs/exceptionbase'
 module Shell ##{
 
 	@type = :bash;
@@ -47,7 +47,7 @@ module Shell ##{
 	## support multiple paths as args
 	def self.makedir *paths ##{
 		paths.each do |p|
-			next if Dir.exists?(p);
+			next if Dir.exist?(p);
 			cmd = "mkdir #{p}";
 			out,err,st = Open3.capture3(cmd);
 			return [err,st.exitstatus] if st.exitstatus!=0;
@@ -78,7 +78,11 @@ module Shell ##{
 		return [err.chomp!,st.exitstatus]
 	end ##}
 
-	def self.generate t=:file,n='<null>',*cnts ##{
+	# generate a specified file, 
+	# - t->type, default is file
+	# - n->name, the name of file
+	# - cnts, all contents.
+	def self.generate t=:file,n='<null>',cnts ##{
 		##puts "DEBUG, generate file: #{n}"
 		##puts "DEBUG, contents: #{cnts}"
 		case (t)
@@ -92,11 +96,36 @@ module Shell ##{
 			$stderr.puts "Error, not support type(#{t})"
 		end
 	end ##}
+	# api to build a file with fn->the specified filename,
+	# *items, items can be multiple arraies, or stringline. like:
+	# cmdshell.buildfile('test',['aline','line2'],['line3'],'line4'...
+	def self.buildfile(fn,*items) ##{{{
+		cnts=[];
+		items.each do |item|
+			if item.is_a?(Array)
+				cnts.append(*item);
+			else
+				cnts << item;
+			end
+		end
+		self.generate(:file,fn,cnts);
+	end ##}}}
 
-	def self.find p,n,ext ##{{{
+	"""
+	findInWindows(p,n), this will be used in windows platform since the find cmd is not exists
+	So we'll use the Dir.glob api to get patterns
+	"""
+	def self.findInWindows(p,n) ##{{{
+		ptrn = "#{File.absolute_path(p)}/#{n}";
+		return Dir.glob(ptrn);
+	end ##}}}
+
+	# ext -> extra option to call the find command.
+	def self.find p,n,ext='' ##{{{
 		"""
 		find files according to the given path and name
 		"""
+		return self.findInWindows(p,n) if self.os == :windows;
 		cmd = "find -L #{File.absolute_path(p)} #{ext} -name \"#{n}\"";
 		### puts "find cmd: #{cmd}"
 		fs,err,st = Open3.capture3(cmd);
@@ -112,6 +141,27 @@ module Shell ##{
 		return fs;
 	end ##}}}
 
+	## API: self.search(r,p), search files according to the given pattern, in given root path.
+	# return absolute path file, even if only 1 file found, shall return an array.
+	def self.search(r,p) ##{{{
+		#r=r.gsub(/\//,'\\') if self.os==:windows;
+		#puts "searching path(#{r})"
+		return self.find(r,p);
+	end ##}}}
+
+	"""
+	self.os, return a symbol indicates current os system:
+	- :windows, :linux
+	"""
+	def self.os ##{{{
+		case RUBY_PLATFORM
+		when /ming/
+			return :windows;
+		else
+			return :linux;
+		end
+		#puts "#{__FILE__}:(self.os) not ready yet."
+	end ##}}}
 end ##}
 
 class ShellException < ExceptionBase

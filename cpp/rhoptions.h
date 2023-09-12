@@ -4,7 +4,7 @@
 #include <rhstring.h>
 #include <rhqueue.h>
 
-namespace RHLib {
+namespace rhlib {
 
 typedef enum {
 	switches,
