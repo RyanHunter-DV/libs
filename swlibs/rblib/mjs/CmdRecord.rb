@@ -1,12 +1,18 @@
+require 'fileutils'
+
 class CmdRecord
 	attr_accessor :record_file;
 	attr_accessor :log_file;
 
 	attr :record_format;
-	def initialize(id)
+	def initialize(id, log_path='.')
 		file_prefix="record_data-";
-		file_name = file_prefix+id+".txt"
-		log_file_name = 'process-'+id+".log"
+		file_name = File.join(log_path, file_prefix+id+".txt")
+		log_file_name = File.join(log_path, 'process-'+id+".log")
+		
+		# Ensure the directory exists
+		FileUtils.mkdir_p(log_path) unless Dir.exist?(log_path)
+		
 		File.delete(file_name) if File.exist?(file_name)
 		@record_file = File.open(file_name,"w");
 		if File.exist?(log_file_name)

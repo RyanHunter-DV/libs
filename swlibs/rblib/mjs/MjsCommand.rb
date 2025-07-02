@@ -1,14 +1,16 @@
 require_relative "CmdRecord"
+require_relative "MultJobSystem"
+
 class MjsCommand
 	attr_accessor :exec, :type, :context;
 	
 	attr :record_file;
-	def initialize(type = :external,ctx=nil, &block)
+	def initialize(type = :external,ctx=nil, cmd)
 		@type = type
 		if type==:internal
-			@exec = block
+			@exec = cmd # is a block
 		else
-			@exec = self.instance_eval(&block);
+			@exec = cmd # is a string
 		end
 		@context = ctx if ctx!=nil;
 	end
@@ -17,7 +19,8 @@ class MjsCommand
 	# set record_file for process executing information
 	def record_file(id=nil)
 		if id!=nil
-			@record_file = CmdRecord.new(id);
+			log_path = MultJobSystem.log_path
+			@record_file = CmdRecord.new(id, log_path);
 			@record_file.record_format('STATUS',1)
 			@record_file.record_format('START_TIME',2)
 			@record_file.record_format('FINISH_TIME',3)
