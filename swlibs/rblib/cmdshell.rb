@@ -1,5 +1,5 @@
 require 'open3'
-require 'libs/exceptionbase'
+require_relative 'exceptionbase'
 module Shell ##{
 
 	@type = :bash;
